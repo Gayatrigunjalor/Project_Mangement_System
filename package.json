@@ -1,0 +1,17 @@
+{
+  "name": "project_mangement_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+   "dev":"node --watch --env-file=.env server.js",
+    "build":"node --env-file=.env server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-build":"echo hello"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
