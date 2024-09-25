@@ -1,0 +1,39 @@
+BACKEND
+│
+├── Controller/
+│   ├── projectController.js
+│   ├── taskController.js
+│   └── userController.js
+│
+├── Middleware/
+│   ├── authentication.js
+│   ├── errorHandlers/
+│   │   ├── handleValidationError.js
+│   │   ├── notFoundHandler.js
+│   │   └── errorHandler.js
+│   └── logger.js
+│
+├── Models/
+│   ├── projectSchema.js
+│   ├── taskSchema.js
+│   └── userSchema.js
+│
+├── Router/
+│   ├── projectRouter.js
+│   ├── taskRouter.js
+│   └── userRouter.js
+│
+├── Time/
+│   └── times.js
+│
+├── Validators/
+│   ├── projectValidation.js
+│   ├── taskValidation.js
+│   └── userValidation.js
+│
+├── .env
+├── .gitignore
+├── index.js
+├── package.json
+├── package-lock.json
+└── README.md
