@@ -1,8 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-import userRouter from './router/userRouter.js';
-import { logging } from './middleware/logger.js';
+import userRouter from './Router/userRouter.js';
+import { logging } from './Middleware/logger.js';
 import 'dotenv/config';
 
 

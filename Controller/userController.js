@@ -1,14 +1,11 @@
-
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/userSchema.js';
+import { User } from '../Models/userSchema.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY; 
-const tokenBlacklist = [];
-
 
 //Signup route
 const resistor = async (req, res) => {
@@ -17,10 +14,6 @@ const resistor = async (req, res) => {
     if (!name || !email || !password) {
         return res.status(400).json({ message: 'Name, email, and password are compulsory' });
     }
-
-
-  
-
     try {
         const userExiting = await User.findOne({ email });
         if (userExiting) {
@@ -35,7 +28,6 @@ const resistor = async (req, res) => {
             email,
             password: hashedPassword
         });
-
 
         await newUser.save();
 
@@ -84,8 +76,6 @@ const Login = async (req, res) => {
   }
 };
 
-
-
 // Logout route
 const logout = (req, res, next) => {
     try {
@@ -98,8 +88,6 @@ const logout = (req, res, next) => {
         res.status(500).json({ message: 'Error logging in', error: err.message });
     }
 };
-
-
 
 //get user by id route
 const getUserById = async (req, res) => {
@@ -127,4 +115,3 @@ const getAllUsers = async (req, res) => {
 };
 
 export {resistor, Login, logout, getUserById, getAllUsers};
-
