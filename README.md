@@ -98,11 +98,7 @@ TaskFlow is a web-based task management system built using the MERN stack (Mongo
 ## User Schema 
 ```
 import mongoose from 'mongoose';
-import moment from 'moment-timezone';
-
-// Define the time zone for India
-const indianTimeZone = 'Asia/Kolkata';
-const getCurrentISTDateTime = () => moment().tz(indianTimeZone).format('YYYY-MM-DD HH:mm:ss');
+import { getCurrentISTDateTime } from '../Time/time.js'
 
 const RegisterSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -111,8 +107,8 @@ const RegisterSchema = new mongoose.Schema({
     createAccountDate: { type: String, default: getCurrentISTDateTime, immutable: true }
 });
 
-const Register = mongoose.model("Register", RegisterSchema);
-export { Register };
+const User = mongoose.model("Register", RegisterSchema);
+export { User };
 ```
 ### User Routes
 - **Register User**  
