@@ -94,8 +94,7 @@ TaskFlow is a web-based task management system built using the MERN stack (Mongo
 ├── package-lock.json
 └── README.md
 ```
-<div style="text-align: center; margin-top: 0;" align="center"><b>User Information<b/></div>
-
+# User Information
 ## User Schema 
 ```
 import mongoose from 'mongoose';
@@ -194,8 +193,7 @@ export { Register };
   - Response:
       - Success: `{ "message": "User Logouted." }`
 
-<div style="text-align: center; margin-top: 0;" align="center"><b>Project Information<b/></div>
-
+# Project Information
 ## Project Schema
 ```
 import mongoose from 'mongoose';
@@ -258,8 +256,7 @@ export { Project }
   - Response: `{ "message": "Project updated successfully." }`
 
 
-<div style="text-align: center; margin-top: 0;" align="center"><b>Task Information<b/></div>
-
+# Task Information
 ## Task Schema
 ```
 import mongoose from 'mongoose';
