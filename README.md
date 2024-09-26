@@ -94,7 +94,7 @@ TaskFlow is a web-based task management system built using the MERN stack (Mongo
 ├── package-lock.json
 └── README.md
 ```
-<div style="text-align: center;" align="center"> User Information</div>
+<div style="text-align: center; margin-top: 0;" align="center"><b>User Information<b/></div>
 
 ## User Schema 
 ```
@@ -194,7 +194,7 @@ export { Register };
   - Response:
       - Success: `{ "message": "User Logouted." }`
 
-<div style="text-align: center;" align="center"> Project Information</div>
+<div style="text-align: center; margin-top: 0;" align="center"><b>Project Information<b/></div>
 
 ## Project Schema
 ```
@@ -258,7 +258,7 @@ export { Project }
   - Response: `{ "message": "Project updated successfully." }`
 
 
-<div style="text-align: center;" align="center"><b> Task Information <b/></div>
+<div style="text-align: center; margin-top: 0;" align="center"><b>Task Information<b/></div>
 
 ## Task Schema
 ```
