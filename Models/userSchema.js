@@ -1,17 +1,14 @@
 import mongoose from 'mongoose';
-import moment from 'moment-timezone';
+import {getCurrentISTDateTime} from '../Time/times.js'
 
-// Define the time zone for India
-const indianTimeZone = 'Asia/Kolkata';
-const getCurrentISTDateTime = () => moment().tz(indianTimeZone).format('YYYY-MM-DD HH:mm:ss');
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    password: { type: String, required: true, minlength: 8 },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    CreateAccountDate: { type: String, default: getCurrentISTDateTime, immutable: true }
+  });
 
-const RegisterSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    createdAt: { type: String, default: getCurrentISTDateTime, immutable: true }
-});
+const User = mongoose.model('User', userSchema);
 
-const Register = mongoose.model("Register", RegisterSchema);
-
-export { Register };
+export {User};

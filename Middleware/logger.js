@@ -3,4 +3,4 @@ const logging = (req,res, next)=>{
     next();
 }
 
-export default logging;
+export {logging};

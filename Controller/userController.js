@@ -1,154 +1,82 @@
-import bcrypt from 'bcrypt';
-import { Register } from '../Models/userSchema.js';
-import { createToken } from '../middleware/authentication.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { User } from '../Models/userSchema.js';
+import dotenv from 'dotenv';
 
-// Register function
-const signup = async (req, res, next) => {
-    const { name, email, password } = req.body;
+dotenv.config();
+
+const secretKey = process.env.JWT_SECRET_KEY; 
+
+//Signup route
+const resistor = async (req, res) => {
+    const { name, email, password} = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Name, email, and password are compulsory' });
+    }
     try {
-        // Check if user already exists
-        let user = await Register.findOne({ email });
-        if (user) {
-            const err = new Error("User already exists. Please Login!")
-            err.status = 400;
-            return next(err)
+        const userExiting = await User.findOne({ email });
+        if (userExiting) {
+            return res.status(400).json({ message: 'Email is exists' });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create a new user instance
-        const newUser = new Register({
+        const newUser = new User({
             name,
             email,
-            password: hashedPassword,
+            password: hashedPassword
         });
 
-        // Save the new user to the database
-        const result = await newUser.save();
-        res.status(200).json({ message: "Signup successful", result });
-    } catch (error) {
-        console.error('Signup Error:', error);
-        const err = new Error("Server Error")
-        err.status = 500;
-        return next(err)
+        await newUser.save();
+
+        res.status(201).json({
+            message: 'User created successfully',
+            user: {
+                id: newUser._id,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
+
+  } catch (err) {
+        res.status(500).json({ message: 'Error creating user', error: err.message });
     }
 };
 
-
-// Login function
-const login = async (req, res, next) => {
+// Login route
+const Login = async (req, res) => {
     const { email, password } = req.body;
-    try {
-        // Check if user exists
-        let user = await Register.findOne({ email });
-        if (!user) {
-            const err = new Error("Invalid Email. Please check..")
-            err.status = 400;
-            return next(err)
-        }
-
-        // Check if password matches
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-            const token = createToken(email)
-            res.cookie('token', token)
-            res.status(200).json({ message: "user login successfully..", user, token })
-        } else {
-            const err = new Error("invalid password..")
-            err.status = 400;
-            return next(err)
-        }
-    } catch (error) {
-        console.error(error.message);
-        const err = new Error("Server Error")
-        err.status = 500;
-        return next(err)
+  
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are mandatory' });
     }
+
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign(
+        { id: user._id, email: user.email, role: user.role }, secretKey, { expiresIn: '1h' }
+    );
+    res.cookie('token', token)
+    res.json({ message: 'Login successful', token });
+  } catch (err) {
+    res.status(500).json({ message: 'Error logging in', error: err.message });
+  }
 };
 
-// Get all signup data function
-const getAllUsers = async (req, res, next) => {
-    try {
-        const users = await Register.find({});
-        res.json(users);
-    } catch (error) {
-        console.error(error.message);
-        const err = new Error("Server Error")
-        err.status = 500;
-        return next(err)
-    }
-};
-
-// Get login data function
-const GetLoginData = async (req, res, next) => {
-    try {
-        // Assuming req.user is set by authentication middleware
-        if (!req.user) {
-            const err = new Error("Unauthorized")
-            err.status = 401;
-            return next(err)
-        }
-
-        const loginData = await Register.findOne({ email: req.user.email });
-        if (!loginData) {
-            const err = new Error("User not logedIn found")
-            err.status = 404;
-            return next(err)
-        }
-        res.json(loginData);
-    } catch (error) {
-        console.error(error.message);
-        const err = new Error("server Error!")
-        err.status = 500;
-        return next(err)
-    }
-};
-
-// update function
-const UpdateLoginData = async (req, res, next) => {
-    const { email, password } = req.body;
-    try {
-        const updatedItem = await Register.findOne({ email });
-        if (!updatedItem) {
-            const err = new Error("User not found. Please check information.")
-            err.status = 404;
-            return next(err)
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt)
-        const submit = ({ ...req.body, password: hashedPassword })
-        const updateData = await Register.findOneAndUpdate({ email }, { $set: submit }, { new: true })
-        res.status(200).json({ message: "user update successfully...", updateData })
-    } catch (error) {
-        const err = new Error("Server Error !")
-        err.status = 500;
-        return next(err)
-    }
-};
-
-// Delete function
-const DeleteUserData = async (req, res, next) => {
-    const { email } = req.body;
-    try {
-        const deletedItem = await Register.findOneAndDelete({ email: email });
-        if (!deletedItem) {
-            const err = new Error("User data not found.")
-            err.status = 404;
-            return next(err)
-        }
-
-        res.json({ message: 'User data deleted successfully...' });
-    } catch (error) {
-        const err = new Error("Server Error !")
-        err.status = 500;
-        return next(err)
-    }
-};
-
-
-// Logout function
+// Logout route
 const logout = (req, res, next) => {
     try {
         // Clear the token cookie on the client side
@@ -157,11 +85,33 @@ const logout = (req, res, next) => {
         // Send a response indicating successful logout
         res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
-        console.error(error.message);
-        const err = new Error("Server Error !")
-        err.status = 500;
-        return next(err)
+        res.status(500).json({ message: 'Error logging in', error: err.message });
     }
 };
 
-export { signup, login, getAllUsers, GetLoginData, DeleteUserData, UpdateLoginData, logout };
+//get user by id route
+const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching user', error: err.message });
+    }
+};
+
+
+//get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users)
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ message: 'Error fetching users', error: err.message });
+    }
+};
+
+export {resistor, Login, logout, getUserById, getAllUsers};
