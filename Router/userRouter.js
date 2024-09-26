@@ -1,13 +1,16 @@
 import express from 'express';
-import { resistor, Login, logout,getUserById, getAllUsers } from '../Controller/userController.js';
+import { register, login, getUserById, getAllUsers, userProfile, updateLoginData, deleteUserData, logout } from '../Controller/userController.js';
+import { verifyToken } from '../Middleware/authentication.js';
 
 const router = express.Router();
 
-// Define routes and attach handlers
-router.post('/resistor', resistor);
-router.post('/login', Login);
+router.post('/register', register);
+router.post('/login', login);
 router.get('/all', getAllUsers); 
+router.get('/userProfile', verifyToken, userProfile);
 router.get('/:id',  getUserById); 
-router.post('/logout',  logout);
+router.put('/update', verifyToken, updateLoginData);
+router.delete('/delete', verifyToken, deleteUserData);
+router.post('/logout', verifyToken, logout);
 
 export default router;
