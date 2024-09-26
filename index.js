@@ -1,12 +1,34 @@
 import express from 'express';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import userRouter from './router/userRouter.js';
+import 'dotenv/config';
 
 
 const app = express();
+const port = process.env.PORT
 
-app.get('/', (req,res)=>{
-    res.send("Server is running.")
-})
+app.use(express.json())
 
-app.listen(4000, ()=>{
-    console.log("Server is runnig on port 4000");
-})
+app.use(cookieParser())
+
+
+  
+  app.use(logging);
+
+
+  app.use('/api/user', userRouter);
+
+
+  mongoose.connect(process.env.Connect)
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((err) => {
+    console.error("Database connection error:", err);
+  });
+
+
+app.listen(port, () => {
+    console.log(`server is working on ${port}`);
+});
