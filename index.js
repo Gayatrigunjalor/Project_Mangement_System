@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import userRouter from './Router/userRouter.js';
 import { logging } from './Middleware/logger.js';
-import errorHandler from './middleware/errorHandler.js';
-import notFoundHandler from './middleware/notFoundHandler.js';
+import errorHandler from './Middleware/errorHandler.js';
+import notFoundHandler from './Middleware/notFoundHandler.js';
 import 'dotenv/config';
 
 
