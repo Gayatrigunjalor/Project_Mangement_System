@@ -8,16 +8,20 @@ dotenv.config();
 const secretKey = process.env.JWT_SECRET_KEY; 
 
 //Signup route
-const register = async (req, res) => {
+const register = async (req, res, next) => {
     const { name, email, password} = req.body;
 
     if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Name, email, and password are compulsory' });
+        const err = new Error("Name, email, and password are compulsory !")
+        err.status = 400;
+        return next(err)
     }
     try {
         const userExiting = await User.findOne({ email });
         if (userExiting) {
-            return res.status(400).json({ message: 'Email is exists' });
+            const err = new Error("User Email already exists. Please Login!")
+            err.status = 400;
+            return next(err)
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -40,30 +44,37 @@ const register = async (req, res) => {
             }
         });
 
-  } catch (err) {
-        res.status(500).json({ message: 'Error creating user', error: err.message });
+  } catch (error) {
+    const err = new Error("Internal Server Error !")
+    err.status = 500;
+    return next(err)
     }
 };
 
 // Login route
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     const { email, password } = req.body;
   
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are mandatory' });
+        const err = new Error("Email and password are mandatory !")
+        err.status = 400;
+        return next(err)
     }
 
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+        const err = new Error("User not found !")
+        err.status = 400;
+        return next(err)
     }
-
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+        const err = new Error("Invalid email or password !")
+        err.status = 400;
+        return next(err)
     }
 
     const token = jwt.sign(
@@ -71,44 +82,58 @@ const login = async (req, res) => {
     );
     res.cookie('token', token)
     res.json({ message: 'Login successful', token });
-  } catch (err) {
-    res.status(500).json({ message: 'Error logging in', error: err.message });
+  } catch (error) {
+    const err = new Error("Internal Server Error !")
+    err.status = 500;
+    return next(err)
   }
 };
 
 //get user by id route
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            const err = new Error("User not found !")
+            err.status = 404;
+            return next(err)
         }
         res.json(user);
-    } catch (err) {
+    } catch (error) {
+        const err = new Error("User already exists. Please Login!")
+        err.status = 400;
+        return next(err)
         res.status(500).json({ message: 'Error fetching user', error: err.message });
     }
 };
 
 //get all users
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
     try {
         const users = await User.find();
         res.status(200).json(users)
-    } catch (err) {
+    } catch (error) {
+        const err = new Error("User already exists. Please Login!")
+        err.status = 400;
+        return next(err)
         res.status(500).json({ message: 'Error fetching users', error: err.message });
     }
 };
 
 // User Profile
-const userProfile = async (req, res) => {
+const userProfile = async (req, res, next) => {
     try {
         if (!req.user) {
-            res.status(401).json({ message: 'Unauthorized' });
+            const err = new Error("Unauthorized User !")
+            err.status = 401;
+            return next(err)
         }
 
         const profile = await User.findOne({ email: req.user.email });
         if (!profile) {
-            res.status(404).json({ message: 'User not logedIn found' });
+            const err = new Error("User not logedIn found !")
+            err.status = 404;
+            return next(err)
         }
         res.json({
             UserProfile: {
@@ -118,19 +143,23 @@ const userProfile = async (req, res) => {
             }
         });        
     } catch (error) {
-        res.status(500).json({ error: err.message });
+        const err = new Error("INternal Server Error !")
+        err.status = 500;
+        return next(err)
     }
 };
 
 // update function
-const updateLoginData = async (req, res) => {
+const updateLoginData = async (req, res, next) => {
     const { name, password } = req.body; 
     try {
         const userEmail = req.user.email;
         const updatedItem = await User.findOne({ email: userEmail });
 
         if (!updatedItem) {
-            return res.status(404).json({ message: 'User not found. Please check information.' });
+            const err = new Error("User not found. Please check information.")
+            err.status = 404;
+            return next(err)
         }
 
         const updates = {};
@@ -152,26 +181,32 @@ const updateLoginData = async (req, res) => {
 
         res.status(200).json({ message: "User updated successfully", updatedUser });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating user', error: error.message });
+        const err = new Error("Internal Server Error !")
+        err.status = 500;
+        return next(err)
     }
 };
 
 // Delete function
-const deleteUserData = async (req, res) => {
+const deleteUserData = async (req, res, next) => {
     try {
         const deletedItem = await User.findOneAndDelete({ email:req.user.email });
         if (!deletedItem) {
-            res.status(404).json({ message: 'User data not found.' });
+            const err = new Error("User data not found.")
+            err.status = 404;
+            return next(err)
         }
 
         res.json({ message: 'User data deleted successfully...' });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error: err.message });
+        const err = new Error("Internal Server Error !")
+        err.status = 500;
+        return next(err)
     }
 };
 
 // Logout route
-const logout = (req, res) => {
+const logout = (req, res, next) => {
     try {
         // Clear the token cookie on the client side
         res.clearCookie('token');
@@ -179,7 +214,9 @@ const logout = (req, res) => {
         // Send a response indicating successful logout
         res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error: err.message });
+        const err = new Error("Internal Server Error")
+        err.status = 500;
+        return next(err)
     }
 };
 

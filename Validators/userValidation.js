@@ -30,10 +30,9 @@ const validateUserLogin = [
 
 // Validation rules for update
 const validateUserUpdate = [
-    body('email')
-        .notEmpty().withMessage('Email field is required')
-        .isEmail().withMessage('Invalid email address')
-        .isString().withMessage('Email must be a string'),
+    body('name')
+        .notEmpty().withMessage('Name field is required')
+        .isString().withMessage('Name must be a string'),
     body('password')
         .notEmpty().withMessage('Password field is required')
         .isString().withMessage('Password must be a string')
