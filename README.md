@@ -226,6 +226,28 @@ export { Project }
   - Request Body:{}  
   - Response: `{ "message": "Project All Project successfully." }`
 
+- **Get Single Project ( Get Logged-in User's Projects )**  
+  - Method: `GET`  
+  - URL: `/api/project/findSingleProjects`  
+  - Request Body:{}  
+  - Response: `{ "message": "User find single project successfully." }`
+
+- **Change Project Status ( Change Status of Logged-in User's Project )**  
+  - Method: `POST`  
+  - URL: `/api/project/update/changeProjectStatus`  
+  - Request Body: 
+  ```json
+  {
+  "projectName": "string",
+  "description": "string",
+  "user":"string",
+  "status":"string",
+  "createdAt":"string"
+
+  }
+  ```  
+  - Response: `{ "message": "Change Project Status successfully." }`
+
 - **Update Project By ID (update only log in user)**  
   - Method: `POST`  
   - URL: `/api/project/update/:id`  
