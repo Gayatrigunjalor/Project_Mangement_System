@@ -209,7 +209,7 @@ export { Project }
 ### Project Routes
 - **Create Project**  
   - Method: `POST`  
-  - URL: `/api/project/create`  
+  - URL: `/api/project/create/project`  
   - Request Body: 
   ```json
   {
@@ -222,19 +222,25 @@ export { Project }
 
 - **Find All Project**  
   - Method: `GET`  
-  - URL: `/api/project/findProjects`  
+  - URL: `/api/project/find/all/Projects`  
   - Request Body:{}  
   - Response: `{ "message": "Project All Project successfully." }`
 
 - **Get Single Project ( Get Logged-in User's Projects )**  
   - Method: `GET`  
-  - URL: `/api/project/findSingleProjects`  
+  - URL: `/api/project/find/single/project`  
+  - Request Body:{}  
+  - Response: `{ "message": "User find single project successfully." }`
+
+- **Get logged in user Project**  
+  - Method: `GET`  
+  - URL: `/api/project/find/project`  
   - Request Body:{}  
   - Response: `{ "message": "User find single project successfully." }`
 
 - **Change Project Status ( Change Status of Logged-in User's Project )**  
   - Method: `POST`  
-  - URL: `/api/project/update/changeProjectStatus`  
+  - URL: `/api/project/update/change/project/status`  
   - Request Body: 
   ```json
   {
@@ -248,7 +254,7 @@ export { Project }
   ```  
   - Response: `{ "message": "Change Project Status successfully." }`
 
-- **Update Project By ID (update only log in user)**  
+- **Update Project By ProjectName (update only log in user)**  
   - Method: `POST`  
   - URL: `/api/project/update/:id`  
   - Request Body: 
@@ -256,7 +262,6 @@ export { Project }
   {
     "projectName": "string",
     "description": "string",
-    "user": "string",
     "status": "string"
   }
   ```  
@@ -264,7 +269,7 @@ export { Project }
 
 - **Delete Project By projectName(delete only log in user)**  
   - Method: `DELETE`  
-  - URL: `/api/project/delete`  
+  - URL: `/api/project/delete/project`  
   - Request Body: 
   ```json
   {
