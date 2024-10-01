@@ -1,13 +1,12 @@
 import { Project } from '../Models/projectSchema.js';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 //createproject route 
 const createProject = async (req, res, next) => {
   const { projectName, description } = req.body;
   const { email } = req.user;
-  
+
   try {
     if (!projectName || !description) {
       const err = new Error("project Name, description are required")
@@ -37,65 +36,88 @@ const createProject = async (req, res, next) => {
   }
 };
 
-
-//  findAllproject route
-const findAllproject = async (req, res) => {
+//  find All project
+const findAllproject = async (req, res, next) => {
   try {
-    const usermail = req.user.email;
-    const projects = await Project.find({ user: usermail });
-    res.status(200).json({ projects });
+    const projects = await Project.find({});
+    res.status(200).json({ message: "find all Project successfully.", project: projects });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    const err = new Error("Internal server error!")
+    err.status = 500;
+    return next(err)
   }
 };
 
 
-    //findsingleproject route
-const findSingleProject = async (req, res) => {
+//find single project 
+const findSingleProject = async (req, res, next) => {
   try {
-    const { projectId } = req.params.id;
-
-    const project = await Project.findOne({ _id: projectId });
+    const { projectName } = req.body;
+    const project = await Project.findOne({ projectName });
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const err = new Error("Project not found !")
+      err.status = 404;
+      return next(err)
     }
 
     res.status(200).json({ project });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    const err = new Error("Internal server error !")
+    err.status = 500;
+    return next(err)
   }
 };
 
- 
-// Update project by id 
-const updateProject = async (req, res) => {
+// Get Logged-in User's Projects
+const findLoginUserProjects = async (req, res, next) => {
   try {
-    const { projectId } = req.params;
-    const usermail = req.user.email;
-    const updatedData = req.body;
+    const projects = await Project.find({ user: req.user.email });
+    res.status(200).json({ message: "Project find successfully.", project: projects });
+  } catch (error) {
+    const err = new Error("Server Error !")
+    err.status = 500;
+    return next(err)
+  }
+};
 
-    const project = await Project.findOneAndUpdate(
-      { _id: projectId, user: usermail },
-      updatedData,
+
+// Update Logged-in User's Project
+const updateProject = async (req, res, next) => {
+  const { projectName, newName, description, status } = req.body;
+  const { email } = req.user;
+
+  try {
+    const existingProject = await Project.findOne({ projectName, user: email });
+    if (!existingProject) {
+      const err = new Error("Project not found for updation")
+      err.status = 404;
+      return next(err)
+    }
+
+    const updatedProject = await Project.findOneAndUpdate(
+      { projectName, user: email },
+      {
+        projectName: newName || existingProject.projectName,
+        description: description || existingProject.description,
+        status: status || existingProject.status
+      },
       { new: true }
     );
 
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found or unauthorized' });
-    }
-
-    res.status(200).json({ message: 'Project updated successfully', project });
+    res.status(200).json({ message: "Project updated successfully.", updatedProject });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    const err = new Error("Server Error !")
+    err.status = 500;
+    return next(err)
   }
-};
+}
 
-// Change Project Status
-const projectStatus = async (req, res) => {
+// Change Project Status (log in user)
+const projectStatus = async (req, res, next) => {
   try {
     const { projectName, status } = req.body;
     const usermail = req.user.email;
@@ -107,33 +129,40 @@ const projectStatus = async (req, res) => {
     );
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const err = new Error("Project not found !")
+      err.status = 404;
+      return next(err)
     }
-
     res.status(200).json({ message: 'Project status updated successfully', project });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    const err = new Error("Internal server error !")
+    err.status = 500;
+    return next(err)
   }
 };
 
-  // Delete project by projectName
-const deleteProject = async (req, res) => {
+// Delete project by projectName(log in user)
+const deleteProject = async (req, res, next) => {
   try {
     const { projectName } = req.body;
     const usermail = req.user.email;
-
     const project = await Project.findOneAndDelete({ projectName, user: usermail });
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const err = new Error("Project not found!")
+      err.status = 404;
+      return next(err)
     }
-
     res.status(200).json({ message: 'Project deleted successfully' });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    const err = new Error("Internal server error!")
+    err.status = 500;
+    return next(err)
   }
 };
 
-export { createProject, findAllproject, findSingleProject, updateProject, projectStatus, deleteProject };
+export { createProject, findAllproject, findSingleProject, findLoginUserProjects, updateProject, projectStatus, deleteProject };
