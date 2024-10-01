@@ -7,7 +7,7 @@ import handleValidationErrors from '../Middleware/handleValidationErrors.js';
 const router = express.Router();
 
 router.post('/create/project', verifyToken, validatecreateProject, handleValidationErrors, createProject);
-router.get('/find/all/Projects', verifyToken, findAllproject);
+router.get('/find/all/Projects', findAllproject);
 router.get('/find/project', verifyToken, findLoginUserProjects);
 router.get('/find/single/project', verifyToken, findSingleProject);
 router.put('/update/project', verifyToken, validateupdateProject, handleValidationErrors, updateProject);
