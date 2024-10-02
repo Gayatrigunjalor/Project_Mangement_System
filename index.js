@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import userRouter from './Router/userRouter.js';
 import projectRouter from './Router/projectRouter.js';
-import taskRouter from './Router/taskRouter.js';
+import taskRouter from './Router/taskRouter.js'
 import { logging } from './Middleware/logger.js';
 import errorHandler from './Middleware/errorHandler.js';
 import notFoundHandler from './Middleware/notFoundHandler.js';
@@ -20,7 +20,7 @@ app.use(logging);
 
 app.use('/api/user', userRouter);
 app.use('/api/project', projectRouter); 
-app.use('/api/tasks', taskRouter); 
+app.use('/api/task', taskRouter)
 
 // Error handling
 app.use(notFoundHandler); 
