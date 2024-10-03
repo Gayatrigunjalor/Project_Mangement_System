@@ -1,6 +1,6 @@
 import express from 'express';
 import { createNewTask, findAllTask, findTaskByAssignedUser, findTasksByStatus, updateTaskByProjectName, deleteTaskByProjectName } from '../Controllers/taskController.js';
-import { verifyToken } from '../middleware/authentication.js';
+import { verifyToken } from '../Middleware/authentication.js';
 import { validateCreateTask, validateUpdateTaskByProjectName, validateDeleteTaskByProjectName} from '../Validators/taskValidation.js';
 import handleValidationErrors from '../Middleware/handleValidationErrors.js';
 
