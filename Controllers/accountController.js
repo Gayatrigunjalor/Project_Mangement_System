@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { User } from '../Models/userSchema.js';
+import { User } from '../Models/accountSchema.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -55,11 +55,13 @@ const register = async (req, res, next) => {
         const userData = await newUser.save();
 
         res.status(201).json({
-            message: 'User created successfully',
+            message: 'created account successfully',
             userData
         });
 
   } catch (error) {
+    console.log(error);
+    
     const err = new Error("Internal Server Error !")
     err.status = 500;
     return next(err)
