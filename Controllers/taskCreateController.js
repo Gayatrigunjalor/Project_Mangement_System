@@ -47,6 +47,30 @@ const getTaskById = async (req, res) => {
     }
 };
 
+// find by status
+const findTasksByStatus = async (req, res) => {
+    try {
+        const tasks = await Task.find({});
+        const groupedTasks = {
+            Backlog: [],
+            InDiscussion: [],
+            InProgress: [],
+            Done: []
+        };
+
+        tasks.forEach(task => {
+            groupedTasks[task.status.replace(' ', '')].push(task);
+        });
+
+        res.status(200).json({ message: "Tasks grouped by status fetched successfully", tasks: groupedTasks });
+    } catch (error) {
+        console.error(error);
+        const err = new Error("Server Error !")
+        err.status = 500;
+        return next(err)
+    }
+};
+
 // Update Task
 const updateTask = async (req, res) => {
     const { taskName, description, status, dueDate } = req.body;
@@ -74,4 +98,4 @@ const deleteTask = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-export { createTask, updateTask, getAllTasks, getTaskById, deleteTask }
+export { createTask, getAllTasks, getTaskById, findTasksByStatus, updateTask, deleteTask }

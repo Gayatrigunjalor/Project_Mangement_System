@@ -15,7 +15,7 @@ const taskSchema = new Schema({
       values: ['Backlog', 'In Discussion', 'In Progress', 'Done'],
       message: 'Status is not valid',
     },
-    default: 'Backlog',
+    default: 'In Discussion',
   },
   createdAt: {type: Date, default: Date.now, immutable: true},
 });

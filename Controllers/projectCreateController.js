@@ -56,6 +56,27 @@ const findAllproject = async (req, res, next) => {
   }
 };
 
+//find single project 
+const findSingleProject = async (req, res, next) => {
+  try {
+    const { projectName } = req.body;
+    const project = await Project.findOne({ projectName });
+
+    if (!project) {
+      const err = new Error("Project not found !")
+      err.status = 404;
+      return next(err)
+    }
+
+    res.status(200).json({ project });
+  } catch (error) {
+    console.error(error);
+    const err = new Error("Internal server error !")
+    err.status = 500;
+    return next(err)
+  }
+};
+
 // Get Logged-in User's Projects
 const findLoggedInAdminProjects = async (req, res, next) => {
   try {
@@ -81,7 +102,7 @@ const findLoggedInAdminProjects = async (req, res, next) => {
 
 // Update Logged-in User's Project
 const updateProject = async (req, res, next) => {
-  const { projectName, newName, description } = req.body;
+  const { projectName, newName, description, status } = req.body;
   const { admiEmail } = req.user;
 
   try {
@@ -97,6 +118,7 @@ const updateProject = async (req, res, next) => {
       {
         projectName: newName || existingProject.projectName,
         description: description || existingProject.description,
+        status: status || existingProject.status
       },
       { new: true }
     );
@@ -159,4 +181,4 @@ const deleteProject = async (req, res, next) => {
   }
 };
 
-export { createProject, findAllproject, findLoggedInAdminProjects, updateProject, projectStatus, deleteProject };
+export { createProject, findAllproject, findSingleProject, findLoggedInAdminProjects, updateProject, projectStatus, deleteProject };
