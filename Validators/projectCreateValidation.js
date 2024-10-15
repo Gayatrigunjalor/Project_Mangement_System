@@ -19,9 +19,6 @@ const validateupdateProject = [
     body('description')
         .notEmpty().withMessage('description field is required')
         .isString().withMessage('Description must be a string'),
-    body('status')
-        .notEmpty().withMessage('status field is required')
-        .isString().withMessage('status must be a string'),
 ];
 
 const validatechangeProjectStatus = [

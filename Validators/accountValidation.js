@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 // Validation rules for signup
-const validateUserSignup = [
+const validateAccountSignup = [
     body('name')
         .notEmpty().withMessage('Name field is required')
         .isString().withMessage('Name must be a string'),
@@ -13,6 +13,9 @@ const validateUserSignup = [
         .notEmpty().withMessage('Password field is required')
         .isString().withMessage('Password must be a string')
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    body('adminToken')
+        .notEmpty().withMessage('adminToken field is required')
+        .isString().withMessage('adminToken must be a string'),
 ];
 
 // Validation rules for login
@@ -40,4 +43,4 @@ const validateUserUpdate = [
 ];
 
 
-export { validateUserSignup, validateUserLogin, validateUserUpdate, }
+export { validateAccountSignup, validateUserLogin, validateUserUpdate, }
