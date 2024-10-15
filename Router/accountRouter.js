@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getUserById, getAllUsers, userProfile, updateLoginData, deleteUserData, logout } from '../Controllers/accountController.js';
+import { register, login, getUserById, getAllUsers, userProfile, employeeTaskDashboard, updateLoginData, deleteUserData, logout } from '../Controllers/accountController.js';
 import { verifyToken } from '../Middleware/authentication.js';
 import { validateAccountSignup, validateUserLogin, validateUserUpdate } from '../Validators/accountValidation.js';
 import handleValidationErrors from '../Middleware/handleValidationErrors.js';
@@ -10,6 +10,7 @@ router.post('/register', validateAccountSignup, handleValidationErrors, register
 router.post('/login', validateUserLogin, handleValidationErrors, login);
 router.get('/all', getAllUsers); 
 router.get('/userProfile', verifyToken, userProfile);
+router.get('/employeeTaskDashboard', verifyToken, employeeTaskDashboard);
 router.get('/:id',  getUserById); 
 router.put('/update', verifyToken, validateUserUpdate, handleValidationErrors, updateLoginData);
 router.delete('/delete', verifyToken, deleteUserData);

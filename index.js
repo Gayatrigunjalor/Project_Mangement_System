@@ -8,6 +8,7 @@ import errorHandler from './Middleware/errorHandler.js';
 import notFoundHandler from './Middleware/notFoundHandler.js';
 import adminRouter from './Router/adminRouter.js'
 import taskCreateRoutes from './Router/taskCreateRoutes.js';
+import employeeTaskBoardRouter from './Router/employeeTaskBoardRouter.js';
 
 import 'dotenv/config';
 
@@ -22,6 +23,7 @@ app.use('/api/account', accountRouter);
 app.use('/api/project', projectCreateRouter); 
 app.use('/api/admin', adminRouter)
 app.use('/api/task', taskCreateRoutes);
+app.use('/task/dashboard', employeeTaskBoardRouter);
 
 // Error handling
 app.use(notFoundHandler); 
