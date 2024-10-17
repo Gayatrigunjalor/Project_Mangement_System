@@ -50,4 +50,68 @@ const employeeTaskDashboard = async (req, res, next) => {
         return next(err);
     }
 };
-export { employeeTaskDashboard };
+
+// Update Task Status
+const updateTaskStatus = async (req, res, next) => {
+    const { taskID } = req.params; 
+    const { status } = req.body; 
+
+    try {
+        // Check if the user is an employee
+        if (req.user.role !== 'employee') {
+            const err = new Error("Unauthorized User! Only employees can update task status.");
+            err.status = 403;
+            return next(err);
+        }
+
+        // Update the task status
+        const updatedTask = await AssignTask.findByIdAndUpdate(
+            taskID,
+            { 'taskDetails.status': status },
+            { new: true, populate: ['project', 'user', 'task'] }
+        );
+
+        if (!updatedTask) {
+            const err = new Error("Task not found.");
+            err.status = 404;
+            return next(err);
+        }
+
+        // Extract the necessary details to send in the response
+        const responseTaskDetails = {
+            projectDetails: {
+                projectName: updatedTask.projectDetails.projectName,
+                description: updatedTask.projectDetails.description,
+                createdBy: updatedTask.projectDetails.createdBy,
+                createdAt: updatedTask.projectDetails.createdAt,
+            },
+            userDetails: {
+                name: updatedTask.userDetails.name,
+                email: updatedTask.userDetails.email,
+                role: updatedTask.userDetails.role,
+            },
+            taskDetails: {
+                taskName: updatedTask.taskDetails.taskName,
+                description: updatedTask.taskDetails.description,
+                status: updatedTask.taskDetails.status,
+            },
+            _id: updatedTask._id,
+            project: updatedTask.project,
+            user: updatedTask.user,
+            task: updatedTask.task,
+            assignedAt: updatedTask.assignedAt,
+        };
+
+        res.status(200).json({
+            message: "Task status updated successfully",
+            updatedTask: responseTaskDetails,
+        });
+    } catch (error) {
+        console.error(error);
+        const err = new Error("Internal Server Error!");
+        err.status = 500;
+        return next(err);
+    }
+};
+
+export { employeeTaskDashboard, updateTaskStatus };
