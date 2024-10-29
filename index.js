@@ -9,6 +9,7 @@ import notFoundHandler from './Middleware/notFoundHandler.js';
 import adminRouter from './Router/adminRouter.js'
 import taskCreateRoutes from './Router/taskCreateRoutes.js';
 import employeeTaskBoardRouter from './Router/employeeTaskBoardRouter.js';
+import cors from 'cors';
 
 import 'dotenv/config';
 
@@ -18,6 +19,14 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 app.use(logging);
+
+const corsOptions = {
+    origin: true,
+    optionsSuccessStatus: 200,
+    credentials:true
+}
+
+app.use(cors(corsOptions))
 
 app.use('/api/account', accountRouter);
 app.use('/api/project', projectCreateRouter); 
