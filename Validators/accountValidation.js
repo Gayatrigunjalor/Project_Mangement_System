@@ -39,7 +39,7 @@ const validateUserUpdate = [
     body('password')
         .notEmpty().withMessage('Password field is required')
         .isString().withMessage('Password must be a string')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
 ];
 
 
