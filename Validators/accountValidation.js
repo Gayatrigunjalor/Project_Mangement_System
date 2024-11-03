@@ -12,10 +12,10 @@ const validateAccountSignup = [
     body('password')
         .notEmpty().withMessage('Password field is required')
         .isString().withMessage('Password must be a string')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
-    body('adminToken')
-        .notEmpty().withMessage('adminToken field is required')
-        .isString().withMessage('adminToken must be a string'),
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+    // body('adminToken')
+    //     .notEmpty().withMessage('adminToken field is required')
+    //     .isString().withMessage('adminToken must be a string'),
 ];
 
 // Validation rules for login
